@@ -1,0 +1,85 @@
+---
+/**
+ * Recensioner — tre citat, sedan CTA-knappen igen. Ingen karusell.
+ *
+ * Citaten är Hyper Detailings egna, ordagrant transkriberade från skärmbilder
+ * av deras Google Business-profil och Facebook-sida (se src/data/reviews.ts).
+ *
+ * TVÅ SAKER SKILJER FRÅN MALLEN:
+ *
+ *  1. Stjärnorna renderas bara för Google-omdömen. Facebook-poster är
+ *     rekommendationer utan betyg, och mallens variant ritade fem stjärnor på
+ *     allt den fick — vilket hade satt ett betyg recensenten aldrig gav.
+ *     Källan visas i stället som en liten etikett under namnet.
+ *  2. Namnen är fullständiga, precis som de står i källan. Mallens kommentar
+ *     efterlyste för- och efternamn; här finns de redan, så korta inte ner dem.
+ *
+ * ⚠️ INGET AV OMDÖMENA HANDLAR OM LACKERING — samtliga beskriver tvätt, rekond
+ * och bemötande. De tre nedan är valda för att de berömmer HANTVERKET och
+ * PRISET utan att lova ett lackresultat, vilket är det närmaste sanningen man
+ * kommer med det material som finns. Be Hyper om omdömen från lackeringskunder
+ * och byt ut IDs nedan.
+ */
+import CtaButton from "@/components/lp/CtaButton.astro";
+import { REVIEWS } from "@/data/reviews";
+
+const IDS = ["alexander-eriksson", "marko-pollanen", "jon-ahlman"];
+const reviews = IDS.map((id) => REVIEWS.find((r) => r.id === id)).filter(
+  (r): r is (typeof REVIEWS)[number] => Boolean(r),
+);
+
+const SOURCE_LABEL = {
+  google: "Omdöme på Google",
+  facebook: "Rekommendation på Facebook",
+} as const;
+---
+
+<section class="py-12 md:py-16 lg:py-20">
+  <div class="container max-w-3xl">
+    <h2
+      class="text-xl leading-tight font-bold tracking-wide text-white uppercase md:text-3xl"
+    >
+      Vad våra kunder säger
+    </h2>
+
+    <div class="mt-7 space-y-4">
+      {
+        reviews.map((review) => (
+          <figure class="rounded-2xl border border-white/10 bg-black/25 p-5 md:p-6">
+            {review.rating !== undefined && (
+              <div
+                class="flex gap-0.5 text-amber-400"
+                role="img"
+                aria-label={`${review.rating} av 5 stjärnor`}
+              >
+                {Array.from({ length: review.rating }).map(() => (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    class="size-4"
+                  >
+                    <path d="M12 2l2.9 6.26 6.86.6-5.2 4.54 1.55 6.7L12 16.55 5.89 20.1l1.55-6.7-5.2-4.54 6.86-.6L12 2z" />
+                  </svg>
+                ))}
+              </div>
+            )}
+            <blockquote class="mt-3 text-[15px] leading-relaxed text-white/85 md:text-base">
+              ”{review.text}”
+            </blockquote>
+            <figcaption class="mt-3 text-sm font-semibold text-white">
+              {review.name}
+              <span class="text-muted-foreground mt-0.5 block text-[11px] font-medium tracking-wide">
+                {SOURCE_LABEL[review.source]}
+              </span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <div class="mt-7">
+      <CtaButton />
+    </div>
+  </div>
+</section>

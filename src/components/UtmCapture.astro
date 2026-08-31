@@ -1,0 +1,29 @@
+---
+// Remembers which ad brought the visitor here (utm_* labels plus Meta's fbclid
+// click id) so the lead form can attach it to the submission even if the
+// visitor scrolls around, opens the FAQ and only converts minutes later.
+//
+// Included ONCE, in DefaultLayout.astro. Read back in LeadDialog.tsx
+// (src/components/lp/) — the keys there must match this list.
+---
+
+<script is:inline>
+  (function () {
+    try {
+      var params = new URLSearchParams(location.search);
+      [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+        "fbclid",
+      ].forEach(function (key) {
+        var value = params.get(key);
+        if (value) sessionStorage.setItem(key, value);
+      });
+    } catch (e) {
+      /* private mode / storage disabled — the lead falls back to "direct" */
+    }
+  })();
+</script>

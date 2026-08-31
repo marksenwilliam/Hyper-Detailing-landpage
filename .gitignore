@@ -1,0 +1,40 @@
+# build output
+dist/
+.output/
+.vercel/
+
+# dependencies
+node_modules/
+
+# generated types
+.astro/
+
+# environment variables
+.env
+.env.production
+.env*.local
+
+# macOS / editors
+.DS_Store
+*.log
+
+# Källmaterial, inte webbinnehåll.
+#
+# En Facebook-export (~976 MB) ligger i public/. ALLT i public/ publiceras
+# ordagrant på webbplatsens rot — hela arkivet skulle bli åtkomligt på
+# https://.../facebook-monsterasbilvard-.../ och kopieras in i dist/ vid varje
+# bygge. Flytta ut mappen ur public/ när den inte längre är låst av något annat
+# program; tills dess hindrar dessa rader att den committas eller deployas.
+public/facebook-*
+_kallmaterial-*
+# Annonsmaterial/underlag (67 MB reference-bilder) — hör hemma i Ads
+# Manager, inte på livesajten eller i repot.
+public/images/ads/
+# Nedladdade font-zips (Geist, Honk, Permanent Marker, ...) — fonter laddas
+# fran Google Fonts eller checkas in uppackade, aldrig som zip.
+*.zip
+
+# Lokal browserprofil fran forhandsgranskning (kan innehalla cookies/sessioner).
+tmp/
+.vercel
+.env*

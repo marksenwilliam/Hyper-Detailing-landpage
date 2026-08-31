@@ -1,0 +1,90 @@
+---
+/**
+ * Om oss — lokal förankring, socialt bevis och ett löfte om bemötande, sedan
+ * CTA-knappen igen (identisk med hero-knappens).
+ *
+ * Inget startår, ingen personalstyrka, inga "tusentals nöjda kunder": inget av
+ * det finns i klientens material och får inte hittas på.
+ *
+ * BILDEN ÄR SIDANS ENDA RIKTIGA FOTOGRAFI — och det är hela poängen med den.
+ * Hypers egen lokal med skylten över porten, deras eget foto. Allt annat
+ * bildmaterial på sidan är genererat (se src/data/images.ts), så det här är det
+ * enda som visar att företaget fysiskt finns och var. Byt inte ut den mot något
+ * snyggare. Ersätt den bara med ett ANNAT äkta foto.
+ *
+ * Den ligger i full sektionsbredd under texten i stället för i en smal
+ * sidokolumn, eftersom den ska synas. Bredden är kapad till max-w-xl (576 px):
+ * källfilen är 600 × 600, och skalas den upp mer än så blir collaget synligt
+ * mjukt. Får du en högupplöst version kan taket höjas.
+ *
+ * Bildtexten säger uttryckligen att det är vår egen verkstad. Det är ett
+ * påstående sidan FÅR göra här, till skillnad från vid de genererade bilderna
+ * — och det är värt att säga rakt ut just för att resten inte kan.
+ *
+ * Om betyget: googleRating.rating är null tills Hypers profil lästs av, och
+ * meningen om omdömen formuleras därefter — utan siffra så länge siffran är
+ * okänd.
+ */
+import CtaButton from "@/components/lp/CtaButton.astro";
+import { BUSINESS } from "@/data/business";
+import { IMAGES } from "@/data/images";
+import { googleRating } from "@/data/reviews";
+
+const verkstad = IMAGES.verkstad;
+/** De tre närmaste orterna, för "med omnejd"-raden. */
+const [, ...omnejd] = BUSINESS.areaServed;
+---
+
+<section class="py-12 md:py-16 lg:py-20">
+  <div class="container max-w-3xl">
+    <h2 class="text-2xl leading-tight tracking-tight text-white md:text-4xl">
+      Lackering i Umeå med omnejd
+    </h2>
+
+    <div>
+      <div
+        class="text-muted-foreground mt-5 space-y-4 text-[15px] leading-relaxed md:text-base"
+      >
+        <p>
+          {BUSINESS.fullName} ligger på {BUSINESS.address.street} i {
+            BUSINESS.address.locality
+          }. Hit kommer bilägare från {BUSINESS.address.locality} med omnejd — {
+            omnejd.slice(0, 4).join(", ")
+          } — när något på bilen behöver lackas om.
+        </p>
+        <p>
+          Skillnaden syns när du hämtar bilen: detaljen matchar resten av
+          karossen i stället för att sticka ut.
+          {
+            googleRating.rating !== null
+              ? ` Våra kunder har gett oss ${googleRating.rating.toLocaleString("sv-SE")} av 5 i snitt på Google.`
+              : " Våra kunder har gett oss femstjärniga omdömen på Google och Facebook."
+          }
+        </p>
+        <p>
+          Du möts av raka besked: vi tittar på skadan, säger vad det kostar, och
+          först då bestämmer du.
+        </p>
+      </div>
+
+      <figure class="mt-7 max-w-xl">
+        <img
+          src={verkstad.src}
+          alt={verkstad.alt}
+          width={verkstad.width}
+          height={verkstad.height}
+          loading="lazy"
+          decoding="async"
+          class="w-full rounded-2xl object-cover ring-1 ring-white/10"
+        />
+        <figcaption class="text-muted-foreground mt-2.5 text-[13px] leading-relaxed">
+          Vår egen verkstad på {BUSINESS.address.street} i {BUSINESS.address.locality}.
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="mt-7">
+      <CtaButton />
+    </div>
+  </div>
+</section>

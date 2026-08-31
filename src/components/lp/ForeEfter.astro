@@ -1,0 +1,71 @@
+---
+/**
+ * Före & efter — samma bil, samma vinkel: skadad dörr och skärm, och samma
+ * detaljer färdiglackerade.
+ *
+ * ⚠️ BILDERNA ÄR GENERERADE (se src/data/images.ts), inte fotograferade hos
+ * Hyper. De ersatte ett riktigt före/efter-par som visade en TVÄTT, inte en
+ * lackering — rätt tjänst, men inte längre ett bevis.
+ *
+ * DÄRFÖR ÄR COPYN NEUTRAL. Den beskriver vad bilderna visar och påstår aldrig
+ * att det är en kunds bil eller ett jobb Hyper utfört. Rubriken sa tidigare
+ * "före och efter ett besök hos oss" — den formuleringen får inte tillbaka
+ * förrän bilderna är riktiga. En genererad bild som läses som ett kundresultat
+ * är exakt den sortens överdrift som fäller en annons.
+ *
+ * ⇒ ÅTGÄRD: be Hyper om före/efter från ett riktigt lackeringsjobb (helst den
+ *   skadade detaljen och samma detalj färdiglackerad) och byt ut IMAGES.fore /
+ *   IMAGES.efter. Sektionen behöver då ingen kodändring — bara copyn nedan får
+ *   skärpas.
+ *
+ * Layout: mallen körde ett CSS-bildspel på mobil eftersom dess källbilder redan
+ * var färdiga före/efter-montage. Det här paret är två separata filer, så här
+ * ligger de i stället sida vid sida i ett tvåkolumnsrutnät på alla
+ * skärmstorlekar — före till vänster, efter till höger. Ingen JavaScript, inget
+ * bildspel, och jämförelsen syns utan att man behöver vänta på nästa slide.
+ */
+import { IMAGES } from "@/data/images";
+
+const PAIR = [
+  { image: IMAGES.fore, label: "Före" },
+  { image: IMAGES.efter, label: "Efter" },
+] as const;
+
+const labelClass =
+  "absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 font-mono text-[11px] font-bold tracking-wider text-white uppercase backdrop-blur-sm";
+---
+
+<section class="py-12 md:py-16 lg:py-20">
+  <div class="container max-w-5xl">
+    <h2
+      class="text-center text-2xl leading-tight tracking-tight text-balance text-white md:text-4xl"
+    >
+      Skillnaden, sida vid sida
+    </h2>
+    <p
+      class="text-muted-foreground mx-auto mt-3 max-w-xl text-center text-[15px] leading-relaxed md:text-base"
+    >
+      Så stor skillnad gör en omlackerad detalj — samma bil, före och efter.
+    </p>
+
+    <div class="mt-7 grid grid-cols-2 gap-3 md:mt-8 md:gap-4 xl:gap-6">
+      {
+        PAIR.map(({ image, label }) => (
+          <figure class="relative overflow-hidden rounded-2xl ring-1 ring-white/10">
+            <img
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+              class="aspect-[4/3] h-full w-full object-cover"
+            />
+            <span class={labelClass}>{label}</span>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

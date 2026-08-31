@@ -1,0 +1,65 @@
+---
+/**
+ * THE call to action — sidans enda interaktiva element, renderad fyra gånger
+ * (hero, om oss, så går det till, omdömen) med identisk text, identiskt pris
+ * och identiskt mål. Deklarerad en gång så de fyra aldrig kan glida isär.
+ *
+ * Två rader med flit: handlingen på rad ett, priset med sitt ankare på rad två.
+ * Pristransparens är kvalificeringsmekanismen — ingen ska kunna öppna
+ * formuläret utan att ha sett priset OCH enheten.
+ *
+ * Det är en <button data-open-lead>, inte en länk: klicket öppnar
+ * lead-dialogen (LeadDialog.tsx lyssnar på [data-open-lead]-klick). Priserna
+ * läses ur LACKERING i src/data/packages.ts — hårdkoda dem aldrig här.
+ *
+ * "från" skrivs alltid ut, aldrig "fr.", och enheten "per detalj" följer med
+ * nu-priset (claim rule 1 i packages.ts). Utan enheten läser 1 500 kr som ett
+ * pris för hela bilen.
+ *
+ * ⚠️ GÖR ALDRIG ETIKETTEN GRÖN. Emerald-400 (#34D399), samma gröna som H1:ets
+ * "LACKERING", mäter 1,7:1 mot den blå primary-fyllningen (#398DFF) — långt
+ * under AA:s 4,5:1 och i praktiken osynligt på en telefon i dagsljus. Det
+ * testades 2026-08-31 och rullades tillbaka hit igen.
+ *
+ * Vill man ha en grön CTA är rätt lösning att flytta det gröna till FYLLNINGEN
+ * (emerald-400 med nästan svart text, 8,8:1) — aldrig till texten på den blå
+ * knappen. Det här är sidans enda konverterande element.
+ */
+import { LACKERING } from "@/data/packages";
+import { formatKr } from "@/lib/utils";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<button
+  type="button"
+  data-open-lead
+  aria-haspopup="dialog"
+  class:list={[
+    "bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex w-full flex-col items-center justify-center rounded-full px-8 py-4 text-center shadow-lg shadow-black/30 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:w-auto sm:min-w-[21rem]",
+    className,
+  ]}
+>
+  {/* Uppmaningen versalt: den ska läsas som knappens handling på en halv
+      sekund, inte konkurrera med prisraden under. `block` (inte inline) så den
+      alltid äger sin egen rad — inline kunde prisraden krypa upp bredvid den på
+      en bred knapp. tracking-wide för att versaler utan spärr klumpar ihop sig. */}
+  <span class="block text-lg leading-tight font-black tracking-wide uppercase sm:text-xl">
+    Hämta erbjudandet
+  </span>
+  {/* Prisraden som eget block under uppmaningen. Varje prisdel är sin egen
+      nowrap-enhet, så en smal skärm bryter mellan nu-priset och parentesen —
+      aldrig mitt i "(ord. från 3 000 kr)". */}
+  <span class="mt-2 block text-[11px] leading-snug font-semibold opacity-80 sm:text-[12px]">
+    <span class="whitespace-nowrap">
+      Just nu från {formatKr(LACKERING.price)} {LACKERING.unit}
+    </span>{" "}
+    <span class="whitespace-nowrap opacity-80">
+      (ord. från <span class="line-through">{formatKr(LACKERING.originalPrice)}</span>)
+    </span>
+  </span>
+</button>

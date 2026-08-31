@@ -1,0 +1,32 @@
+---
+/**
+ * Topprad — logotyp till vänster, adress (och öppettider, när de finns) till
+ * höger i liten text.
+ *
+ * Ordmärket är Hypers riktiga logotyp som SVG, inte en länk: sidans enda
+ * klickbara element är CTA-knapparna och formuläret. Filen är vektoriserad ur
+ * klientens egen logotyp och ligger i /brand/ (se huvudprojektets
+ * public/assets/brand/README.md för lockup-varianterna).
+ *
+ * Öppettiderna renderas först när BUSINESS.openingHours har fått ett riktigt
+ * värde — huvudsajtens tider är obekräftade och får inte hittas på.
+ */
+import { ADDRESS_ONELINE, BUSINESS } from "@/data/business";
+---
+
+<div
+  class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-white/10 px-4 py-2.5 text-[12px] text-white/70 md:px-6"
+>
+  {/* height är satt så raden aldrig hoppar innan SVG:n laddat. Vitversionen
+      av lockupen är gjord för mörka underlag, vilket är hela den här sidan. */}
+  <img
+    src="/brand/logo-horizontal.svg"
+    alt={BUSINESS.name}
+    height="18"
+    class="h-[18px] w-auto shrink-0"
+  />
+  <span class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-right">
+    {BUSINESS.openingHours && <span>{BUSINESS.openingHours}</span>}
+    <span>{ADDRESS_ONELINE}</span>
+  </span>
+</div>

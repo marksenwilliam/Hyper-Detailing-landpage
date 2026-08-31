@@ -1,0 +1,218 @@
+---
+import SectionCard from "@/components/section-card.astro";
+import { ADDRESS_ONELINE, BUSINESS } from "@/data/business";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+
+/**
+ * Integritetspolicy.
+ *
+ * This page is load-bearing, not boilerplate: the consent checkbox on the lead
+ * form links here, and a Meta ad account can be restricted for running a
+ * lead-gen page whose consent text points at nothing. It must therefore stay
+ * accurate to what the site ACTUALLY does.
+ *
+ * Two things to update as the setup changes:
+ *  1. The list of processors below (GoHighLevel, Resend, Vercel, Cloudflare,
+ *     Meta). Add or remove entries as tools change.
+ *  2. The pixel paragraph — it describes behaviour that only happens when
+ *     PUBLIC_META_PIXEL_ID is configured.
+ */
+const UPDATED = "13 augusti 2026";
+---
+
+<DefaultLayout
+  title="Integritetspolicy | Hyper Detailing"
+  description="Så behandlar Hyper Detailing dina personuppgifter när du skickar en förfrågan via vår webbplats."
+  noindex
+  hideNav
+  hideFloatingCall
+>
+  <div class="space-y-3 px-3 py-3 md:space-y-4 md:px-4 md:py-4 lg:px-6 lg:py-6">
+    <SectionCard>
+      <article class="container max-w-3xl py-24 lg:py-32">
+        <h1 class="text-3xl font-bold tracking-tight md:text-5xl">
+          Integritetspolicy
+        </h1>
+        <p class="text-muted-foreground mt-4 text-sm">
+          Senast uppdaterad: {UPDATED}
+        </p>
+
+        <div
+          class="mt-12 space-y-10 leading-relaxed [&_h2]:text-xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:md:text-2xl [&_li]:text-muted-foreground [&_p]:text-muted-foreground [&_p]:mt-3 [&_ul]:mt-3 [&_ul]:space-y-2 [&_ul]:ps-5 [&_ul]:list-disc"
+        >
+          <section>
+            <h2>Vem ansvarar för dina uppgifter?</h2>
+            <p>
+              {BUSINESS.name} (org.nr {BUSINESS.orgnr}), {ADDRESS_ONELINE}, är
+              personuppgiftsansvarig för de uppgifter du lämnar här. Du når oss
+              på <a
+                href={`mailto:${BUSINESS.email}`}
+                class="text-foreground underline underline-offset-4"
+                >{BUSINESS.email}</a
+              > eller <a
+                href={BUSINESS.phone.href}
+                class="text-foreground underline underline-offset-4"
+                >{BUSINESS.phone.display}</a
+              >.
+            </p>
+          </section>
+
+          <section>
+            <h2>Vilka uppgifter samlar vi in?</h2>
+            <p>
+              När du skickar en förfrågan via formuläret på den här sidan samlar
+              vi in:
+            </p>
+            <ul>
+              <li>Namn</li>
+              <li>Telefonnummer</li>
+              <li>E-postadress (om du anger den)</li>
+              <li>Vilket paket du är intresserad av och din bilmodell</li>
+              <li>Det meddelande du eventuellt skriver</li>
+              <li>
+                Vilka samtycken du lämnat, när du lämnade dem och vilken text du
+                godkände
+              </li>
+              <li>
+                Teknisk information om besöket: vilken annons eller länk du kom
+                ifrån (så kallade UTM-parametrar och Metas klick-id) samt
+                sidadress och tidpunkt
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Varför behandlar vi uppgifterna?</h2>
+            <ul>
+              <li>
+                <strong class="text-foreground">För att kontakta dig</strong> om
+                din förfrågan, lämna prisuppgift och boka tid. Rättslig grund:
+                ditt samtycke, och därefter fullgörande av avtal när en bokning
+                görs.
+              </li>
+              <li>
+                <strong class="text-foreground">För marknadsföring</strong> via
+                SMS och e-post — men endast om du kryssat i den frivilliga rutan
+                för det. Rättslig grund: ditt samtycke.
+              </li>
+              <li>
+                <strong class="text-foreground">För att mäta annonsering</strong
+                > och förstå vilka annonser som leder till förfrågningar.
+                Rättslig grund: berättigat intresse, respektive ditt samtycke där
+                cookies krävs.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Vilka får ta del av uppgifterna?</h2>
+            <p>
+              Vi säljer aldrig dina uppgifter. Vi anlitar följande
+              personuppgiftsbiträden för att kunna driva verksamheten:
+            </p>
+            <ul>
+              <li>
+                <strong class="text-foreground">GoHighLevel</strong> — vårt
+                kundsystem, där förfrågan sparas och där utskick av
+                bekräftelse-SMS sker.
+              </li>
+              <li>
+                <strong class="text-foreground">Resend</strong> — skickar
+                e-postavisering till oss när en ny förfrågan kommer in.
+              </li>
+              <li>
+                <strong class="text-foreground">Vercel</strong> — driftar
+                webbplatsen och behandlar tekniska loggar.
+              </li>
+              <li>
+                <strong class="text-foreground">Cloudflare</strong> — skyddar
+                formuläret mot automatiserad spam (Turnstile).
+              </li>
+              <li>
+                <strong class="text-foreground">Meta Platforms</strong> — tar
+                emot mätdata om annonsresultat, i förekommande fall.
+              </li>
+              <li>
+                <strong class="text-foreground">Marksen Digital</strong> — vår
+                marknadsföringspartner, som administrerar annonseringen åt oss.
+              </li>
+            </ul>
+            <p>
+              Vissa av dessa leverantörer kan behandla uppgifter utanför EU/EES. I
+              de fallen sker överföringen med stöd av EU-kommissionens
+              standardavtalsklausuler eller motsvarande skyddsåtgärder.
+            </p>
+          </section>
+
+          <section>
+            <h2>Hur länge sparar vi uppgifterna?</h2>
+            <p>
+              Förfrågningar som inte leder till en bokning raderas senast 12
+              månader efter senaste kontakt. Uppgifter kopplade till en genomförd
+              bokning sparas så länge det krävs för bokförings- och
+              garantiändamål. Samtycken sparas så länge de är aktiva, och
+              dokumentationen om att samtycket lämnats sparas därefter så länge
+              det behövs för att kunna visa att behandlingen varit laglig.
+            </p>
+          </section>
+
+          <section>
+            <h2>Cookies och mätning</h2>
+            <p>
+              Vi använder webbläsarens sessionslagring för att komma ihåg vilken
+              annons du kom ifrån under besöket. Den töms när du stänger fliken.
+            </p>
+            <p>
+              När annonsmätning är aktiverad laddas Metas pixel på sidan. Den
+              sätter cookies och rapporterar att ett besök respektive en
+              förfrågan skett, så att vi kan mäta vilka annonser som fungerar.
+              Du kan blockera cookies i din webbläsare och hantera
+              annonsinställningar direkt hos Meta.
+            </p>
+          </section>
+
+          <section>
+            <h2>Dina rättigheter</h2>
+            <p>Du har rätt att:</p>
+            <ul>
+              <li>begära ett utdrag över vilka uppgifter vi har om dig,</li>
+              <li>få felaktiga uppgifter rättade,</li>
+              <li>få dina uppgifter raderade,</li>
+              <li>invända mot eller begära begränsning av behandlingen,</li>
+              <li>
+                när som helst återkalla ett samtycke — det påverkar inte
+                behandling som redan skett,
+              </li>
+              <li>få ut dina uppgifter i ett maskinläsbart format.</li>
+            </ul>
+            <p>
+              Hör av dig till <a
+                href={`mailto:${BUSINESS.email}`}
+                class="text-foreground underline underline-offset-4"
+                >{BUSINESS.email}</a
+              > så hjälper vi dig. Vill du avregistrera dig från SMS-utskick svarar
+              du <strong class="text-foreground">STOPP</strong> på ett SMS från oss.
+            </p>
+            <p>
+              Är du inte nöjd med hur vi hanterar dina uppgifter har du rätt att
+              klaga till Integritetsskyddsmyndigheten (IMY),
+              <a
+                href="https://www.imy.se"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-foreground underline underline-offset-4">imy.se</a
+              >.
+            </p>
+          </section>
+        </div>
+
+        <a
+          href="/"
+          class="mt-14 inline-flex items-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold transition-colors hover:bg-white/5"
+        >
+          Tillbaka till startsidan
+        </a>
+      </article>
+    </SectionCard>
+  </div>
+</DefaultLayout>

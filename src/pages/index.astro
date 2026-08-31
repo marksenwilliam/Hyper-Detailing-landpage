@@ -1,0 +1,103 @@
+---
+import AboutSection from "@/components/lp/AboutSection.astro";
+import ContactSection from "@/components/lp/ContactSection.astro";
+import ForeEfter from "@/components/lp/ForeEfter.astro";
+import HeroLp from "@/components/lp/HeroLp.astro";
+import { LeadDialog } from "@/components/lp/LeadDialog";
+import OfferSection from "@/components/lp/OfferSection.astro";
+import PackageContents from "@/components/lp/PackageContents.astro";
+import ReviewsSection from "@/components/lp/ReviewsSection.astro";
+import TopBar from "@/components/lp/TopBar.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import SectionCard from "@/components/section-card.astro";
+import { IMAGES } from "@/data/images";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/data/site";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+import { graph, localBusinessNode, webSiteNode } from "@/lib/schema";
+
+/*
+  Byggd på Mönsterås Bilvårds landningssida (2026-08-31), samma bevisade
+  konverteringsstruktur: topbar → hero → erbjudande → om oss → före/efter →
+  så går det till → omdömen → kontakt. ETT erbjudande (lackering per detalj),
+  en CTA upprepad fyra gånger, ett dialogformulär (två steg — kontaktuppgifter,
+  sedan det enda tillvalet före submit).
+
+  Navbar, footer, floating pill and the FAQ/marquee/process sections are gone
+  BY DESIGN — the CTA buttons and the form are the page's only clickable
+  elements (plus the legally required privacy-policy link). hideNav/hideFooter/
+  hideFloatingCall keep the layout's Meta Pixel, UTM capture and bfcache
+  repair, which must not change.
+
+  No faqPageNode in the JSON-LD any more: the FAQ section left the page, and
+  the node must mirror what is actually rendered.
+*/
+const heroImage = new URL(IMAGES.hero.src, Astro.site).toString();
+
+const schema = graph([localBusinessNode(heroImage), webSiteNode()]);
+---
+
+{
+  /*
+    noindex: det här är en betald annonssida. Den delar tjänst och priser med
+    hyper-detailing.vercel.app, och två indexerade sidor som konkurrerar om
+    samma sökord hjälper ingen av dem. Sätt `noindex` till false om sidan
+    någon gång blir företagets kanoniska sida för lackering.
+  */
+}
+<DefaultLayout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  noindex
+  hideNav
+  hideFooter
+  hideFloatingCall
+  preload={[{ href: IMAGES.hero.src }]}
+>
+  <JsonLd data={schema} />
+
+  <div
+    id="top"
+    class="space-y-3 px-3 py-3 md:space-y-4 md:px-4 md:py-4 lg:px-6 lg:py-6"
+  >
+    <SectionCard>
+      <TopBar />
+      <HeroLp />
+    </SectionCard>
+
+    <SectionCard>
+      <OfferSection />
+    </SectionCard>
+
+    <SectionCard>
+      <AboutSection />
+    </SectionCard>
+
+    {/* Före/efter direkt efter Om oss: besökaren har precis läst påståendena
+        (lokalt, femstjärnigt) och får beviset innan processlistan. Ett medvetet
+        tillägg utöver målstrukturen — bevis, inte dekoration.
+        ⚠️ Bilderna visar en tvätt/rekond, inte en lackering. Se ForeEfter. */}
+    <SectionCard>
+      <ForeEfter />
+    </SectionCard>
+
+    <SectionCard>
+      <PackageContents />
+    </SectionCard>
+
+    <SectionCard>
+      <ReviewsSection />
+    </SectionCard>
+
+    <SectionCard>
+      <ContactSection />
+    </SectionCard>
+  </div>
+
+  {
+    /*
+      client:load, not client:visible — this is the conversion element. The
+      dialog must be able to open the instant a visitor taps the hero CTA.
+    */
+  }
+  <LeadDialog client:load />
+</DefaultLayout>

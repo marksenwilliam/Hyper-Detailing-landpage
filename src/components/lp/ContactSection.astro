@@ -1,0 +1,82 @@
+---
+/**
+ * Kontakt + footer — adress, telefon, mejl och inbäddad karta, sedan en
+ * footer med copyright.
+ *
+ * Telefon och mejl är REN TEXT, inte länkar: sidans enda klickbara element är
+ * CTA-knapparna och formuläret (den bevisade strukturens regel). Kartan är en
+ * lazy-laddad embed långt under folden, så den kostar inget vid sidladdning.
+ *
+ * En medveten avvikelse från "footer med endast copyright": länken till
+ * integritetspolicyn står kvar. Formulärets samtyckesruta hänvisar till den,
+ * och en Meta-annonsdestination utan nåbar integritetspolicy riskerar
+ * annonskontot — det är juridik, inte navigation.
+ */
+import { ADDRESS_ONELINE, BUSINESS } from "@/data/business";
+
+const mapsEmbed = `https://www.google.com/maps?q=${encodeURIComponent(
+  `${BUSINESS.name}, ${ADDRESS_ONELINE}`,
+)}&output=embed`;
+
+const year = new Date().getFullYear();
+---
+
+<section class="py-12 md:py-16">
+  <div class="container max-w-3xl">
+    <h2 class="text-2xl leading-tight tracking-tight text-white md:text-4xl">
+      Hitta till oss
+    </h2>
+
+    <dl class="mt-6 space-y-2.5 text-[15px] leading-relaxed md:text-base">
+      <div class="flex flex-wrap gap-x-2">
+        <dt class="text-muted-foreground w-20 shrink-0">Adress</dt>
+        <dd class="text-white">{ADDRESS_ONELINE}</dd>
+      </div>
+      {/* Telefonraden hoppas över så länge numret är en platshållare — se
+          phoneIsPlaceholder i src/data/business.ts. Fyll i det riktiga numret
+          och sätt spärren till false, så dyker raden upp igen. */}
+      {
+        !BUSINESS.phoneIsPlaceholder && (
+          <div class="flex flex-wrap gap-x-2">
+            <dt class="text-muted-foreground w-20 shrink-0">Telefon</dt>
+            <dd class="text-white">{BUSINESS.phone.display}</dd>
+          </div>
+        )
+      }
+      <div class="flex flex-wrap gap-x-2">
+        <dt class="text-muted-foreground w-20 shrink-0">Mejl</dt>
+        <dd class="text-white">{BUSINESS.email}</dd>
+      </div>
+      {
+        BUSINESS.openingHours && (
+          <div class="flex flex-wrap gap-x-2">
+            <dt class="text-muted-foreground w-20 shrink-0">Öppet</dt>
+            <dd class="text-white">{BUSINESS.openingHours}</dd>
+          </div>
+        )
+      }
+    </dl>
+
+    <iframe
+      src={mapsEmbed}
+      title={`Karta till ${BUSINESS.name}, ${ADDRESS_ONELINE}`}
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      class="mt-6 h-72 w-full rounded-2xl border-0 ring-1 ring-white/10 md:h-80"
+    ></iframe>
+
+    <footer
+      class="text-muted-foreground mt-10 border-t border-white/10 pt-6 text-center text-xs leading-relaxed"
+    >
+      {/* Org.nr renderas bara när det finns. Hyper Detailings organisationsnummer
+          saknas i klientens material (se business.ts), och raden "Org.nr ·" med
+          tomrum efter läser som en trasig sida. */}
+      <p>
+        © {year} {BUSINESS.name}{BUSINESS.orgnr ? ` · Org.nr ${BUSINESS.orgnr}` : ""} ·{" "}
+        <a href="/integritet" class="underline underline-offset-2 transition-opacity hover:opacity-75">
+          Integritetspolicy
+        </a>
+      </p>
+    </footer>
+  </div>
+</section>

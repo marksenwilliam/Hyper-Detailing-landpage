@@ -1,0 +1,183 @@
+---
+/**
+ * "Så går lackeringen till" — processens steg i ordning, ett kort stycke per
+ * steg. Här får den som vill läsa detaljerna dem; den som inte vill har redan
+ * fått allt den behöver högre upp.
+ *
+ * Stegen och beskrivningarna kommer från LACKERING.includes + STEP_NOTES i
+ * src/data/packages.ts (enda källan till vad som ingår). Listan står redan i
+ * processordning där, så den renderas rakt av — mallens ORDER-sortering fanns
+ * för ett tvättpaket vars steg låg i fel ordning i datat, och en sorteringstabell
+ * som bara upprepar den befintliga ordningen är en extra sak att hålla synkad
+ * utan att göra något.
+ *
+ * ⚠️ STEGEN ÄR INTE BEKRÄFTADE AV HYPER — se den långa kommentaren vid
+ * `includes` i packages.ts. De beskriver vad en sprutlackering per definition
+ * innehåller, men ordval och omfattning ska läsas igenom med honom innan sidan
+ * kör betald trafik.
+ *
+ * Gåv-raden och exkluderingsraderna renderas villkorat: LACKERING_BONUS är null
+ * och `excludes` är tom för Hyper, så ingen av dem syns i dag. Fylls de i dyker
+ * de upp automatiskt.
+ */
+import CtaButton from "@/components/lp/CtaButton.astro";
+import { IMAGES } from "@/data/images";
+import { LACKERING, LACKERING_BONUS, featuresOf } from "@/data/packages";
+import { formatKr } from "@/lib/utils";
+
+const steps = featuresOf(LACKERING);
+const excludes = LACKERING.excludes ?? [];
+const verkstad = IMAGES.verkstadSprutbox;
+const macro = IMAGES.macro;
+const avsyning = IMAGES.avsyning;
+---
+
+<section class="py-12 md:py-16 lg:py-20">
+  <div class="container max-w-3xl">
+    <h2 class="text-2xl leading-tight tracking-tight text-white md:text-4xl">
+      Så går lackeringen till
+    </h2>
+    <p class="text-muted-foreground mt-3 text-[15px] leading-relaxed md:text-base">
+      Steg för steg, från att vi tittar på skadan till att du hämtar bilen. Allt
+      nedan ingår i frånpriset {formatKr(LACKERING.price)} {LACKERING.unit}.
+    </p>
+
+    {/* Vidvinkeln före listan: lösa skärmar och stötfångare på lackställ längs
+        väggarna, en maskerad bil i boxen. Den säger samma sak som hela
+        sektionen — det är enskilda detaljer som lackeras — innan man läst ett
+        enda steg. */}
+    <img
+      src={verkstad.src}
+      alt={verkstad.alt}
+      width={verkstad.width}
+      height={verkstad.height}
+      loading="lazy"
+      decoding="async"
+      class="mt-7 aspect-[16/9] w-full rounded-2xl object-cover ring-1 ring-white/10"
+    />
+
+    {/* Numrerad lista: till skillnad från mallens tvättpaket är ordningen här
+        betydelsebärande — grund före färg, färg före klarlack. */}
+    <ol
+      class="mt-4 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-black/25"
+    >
+      {
+        steps.map((step, i) => (
+          <li class="flex items-start gap-4 px-5 py-4">
+            <span
+              aria-hidden="true"
+              class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 font-mono text-sm font-bold text-emerald-400"
+            >
+              {i + 1}
+            </span>
+            {/* min-w-0 flex-1: utan det trycker en lång beskrivning ut
+                "Ingår"-etiketten över högerkanten i stället för att radbryta. */}
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-white">{step.name}</p>
+              {step.description && (
+                <p class="text-muted-foreground mt-0.5 text-sm leading-relaxed">
+                  {step.description}
+                </p>
+              )}
+            </div>
+            <span class="mt-0.5 shrink-0 font-mono text-[10px] font-medium tracking-wider text-emerald-400 uppercase">
+              Ingår
+            </span>
+          </li>
+        ))
+      }
+
+      {/* Gåvan — på köpet, aldrig ett ordinarie steg. Dold tills en riktig
+          gåva finns. */}
+      {
+        LACKERING_BONUS && (
+          <li class="flex items-start gap-4 bg-emerald-500/[0.06] px-5 py-4">
+            <span
+              aria-hidden="true"
+              class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-base"
+            >
+              🎁
+            </span>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-white">{LACKERING_BONUS.name}</p>
+              <p class="mt-1 font-mono text-[10px] font-semibold tracking-wider text-emerald-400 uppercase">
+                På köpet, värde {formatKr(LACKERING_BONUS.value)}
+              </p>
+            </div>
+          </li>
+        )
+      }
+
+      {/* Vad tjänsten INTE omfattar. Tom tills Hyper sagt var gränsen går mot
+          plåtarbete och riktning (claim rule 7). */}
+      {
+        excludes.map((item) => (
+          <li class="flex items-start gap-4 px-5 py-4">
+            <span
+              aria-hidden="true"
+              class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="size-3.5"
+              >
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </span>
+            <div>
+              <p class="font-medium text-white">
+                {item.name}
+                <span class="ml-1.5 text-[11px] font-semibold tracking-wider text-red-400 uppercase">
+                  Ingår ej
+                </span>
+              </p>
+              {item.description && (
+                <p class="text-muted-foreground mt-0.5 text-sm leading-relaxed">
+                  {item.description}
+                </p>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    {/* Två bilder som visar slutet av processen: ytan på nära håll och
+        avsyningen. De sitter efter listan, inte i den — ett steg med bild och
+        sex utan hade läst som att just det steget var viktigast. */}
+    <div class="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-4">
+      <img
+        src={macro.src}
+        alt={macro.alt}
+        width={macro.width}
+        height={macro.height}
+        loading="lazy"
+        decoding="async"
+        class="aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-white/10"
+      />
+      <img
+        src={avsyning.src}
+        alt={avsyning.alt}
+        width={avsyning.width}
+        height={avsyning.height}
+        loading="lazy"
+        decoding="async"
+        class="aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-white/10"
+      />
+    </div>
+
+    <p class="text-muted-foreground mt-4 text-xs leading-relaxed">
+      Frånpris per detalj — en större yta som en huv eller ett tak kostar mer. Du
+      får exakt pris innan du bokar, utan bindning.
+    </p>
+
+    <div class="mt-7">
+      <CtaButton />
+    </div>
+  </div>
+</section>

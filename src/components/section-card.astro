@@ -1,0 +1,17 @@
+---
+/**
+ * The page's structural unit: a rounded, clipped panel sitting on the near-black
+ * canvas with a small gap between panels. Same shell the Ecodrive homepage uses,
+ * which is what gives the layout its "stacked cards" look.
+ */
+interface Props {
+  class?: string;
+  id?: string;
+}
+
+const { class: className = "", id } = Astro.props;
+---
+
+<div id={id} class:list={["surface-panel overflow-hidden rounded-3xl", className]}>
+  <slot />
+</div>

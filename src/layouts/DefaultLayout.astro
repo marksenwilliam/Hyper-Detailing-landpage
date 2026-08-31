@@ -1,0 +1,142 @@
+---
+import { Agentation } from "agentation";
+
+import BaseHead from "@/components/BaseHead.astro";
+import { META_PIXEL_ID } from "@/data/site";
+import { FloatingCall } from "@/components/blocks/floating-call";
+import { Footer } from "@/components/blocks/footer";
+import { Navbar } from "@/components/blocks/navbar";
+import UtmCapture from "@/components/UtmCapture.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  hideNav?: boolean;
+  hideFooter?: boolean;
+  hideFloatingCall?: boolean;
+  preload?: { href: string; media?: string }[];
+}
+
+const {
+  title,
+  description,
+  image,
+  noindex,
+  hideNav,
+  hideFooter,
+  hideFloatingCall,
+  preload,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="sv" class="dark">
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      noindex={noindex}
+      preload={preload}
+    />
+    <UtmCapture />
+
+    {
+      /*
+        Scroll-reveal safety net.
+
+        The reveal components (FadeIn / TextReveal / LineReveal) server-render
+        their hidden starting state as an inline `opacity: 0` and rely on the
+        React island to animate them in. With JavaScript disabled that
+        animation never runs and entire sections — the package cards, the
+        process steps — would stay permanently blank on a page we are paying
+        for clicks to. Inline styles beat stylesheets, hence !important.
+      */
+    }
+    <noscript>
+      <style>
+        [style*="opacity:0"],
+        [style*="opacity: 0"] {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
+  </head>
+  <body class="antialiased">
+    {
+      /* Meta's own install snippet ships this <noscript> beacon so a JS-less
+         visit still registers a PageView. It must live in <body>: an <img> is
+         not valid inside <head> and the parser would relocate it anyway. */
+      META_PIXEL_ID && (
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style="display:none"
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+            alt=""
+          />
+        </noscript>
+      )
+    }
+    {
+      /*
+        client:load, not client:only — client:only renders nothing on the
+        server, which would leave the header blank until React downloads. The
+        navbar is SSR-safe (its only browser access is inside effects), so the
+        markup ships in the initial HTML and only the scrolled state waits for
+        hydration.
+      */
+    }
+    {!hideNav && <Navbar client:load />}
+
+    <main><slot /></main>
+
+    {!hideFooter && <Footer client:visible />}
+
+    {
+      /*
+        client:idle, not client:visible — the pill is fixed and starts hidden,
+        revealing itself through its own IntersectionObserver, so the island
+        wrapper has no meaningful geometry for client:visible to key off.
+      */
+    }
+    {!hideFloatingCall && <FloatingCall client:idle />}
+
+    {
+      /*
+        Agentation — annotate the page in the browser and have the notes sync
+        straight to the coding agent through its MCP server.
+
+        `import.meta.env.DEV` is a compile-time constant, so the whole island is
+        tree-shaken out of the production build: no markup, no chunk, nothing
+        for a visitor to download. client:only="react" because the widget is
+        browser-only and must not be server-rendered.
+      */
+    }
+    {import.meta.env.DEV && <Agentation client:only="react" />}
+
+    <script is:inline>
+      // bfcache repair. If the page is snapshotted while the contact dialog is
+      // open, the frozen DOM carries `overflow:hidden` on <body> — and a
+      // restore (back-swipe, tab re-open) brings the page back unscrollable.
+      // On a persisted pageshow, ask any open layer to dismiss itself (Escape,
+      // so React cleans up its own state), then clear the lock in case nothing
+      // was listening. Never remove React-managed nodes here.
+      window.addEventListener("pageshow", (e) => {
+        if (!e.persisted) return;
+        document.dispatchEvent(
+          new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+        );
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            document.body.style.overflow = "";
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

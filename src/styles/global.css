@@ -1,0 +1,562 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens — carried over from the Ecodrive Trafikskola homepage so this
+   landing page reads as the same design system: near-black canvas, one bright
+   accent, Geist for both display and body, 8px radius scale.
+
+   BRAND COLOURS
+
+     --primary   #398DFF  the accent. Used SOLID everywhere it appears: CTA
+                          fills, ticks, asterisks, the discount badge, focus
+                          rings, the oversized "Boka tid". 5.9:1 against the
+                          button label and 4.7:1 as text on the lightest part
+                          of a panel, so it is legible in both roles.
+
+     --brand-navy #08234D the dark blue. NEVER A SOLID FILL — it exists only as
+                          the far end of a black-to-navy gradient. Every dark
+                          surface on the page is that gradient rather than a
+                          flat colour, which is what gives the panels their
+                          depth instead of reading as slabs.
+
+   THE SURFACES
+
+     .surface-panel   linear-gradient(155deg, #00030A -> #02101F -> #08234D)
+                      the section panels, ~95% of what you see. The black end
+                      is weighted: it holds to 42% before the navy climbs in.
+     --background     #01070F  the canvas showing through the gutters: the
+                      black end of the same ramp, so panels appear lit
+     recessed cards   bg-black/25 over the panel, so they darken the gradient
+                      rather than introducing another flat colour
+
+   Contrast at the panel's LIGHTEST point, which is the worst case: white
+   15.5:1, muted-foreground 7.1:1, --primary 4.7:1. Ending the gradient one
+   stop lighter (#0A2A5C) would drop the accent to 4.3:1 and put body-size
+   accent text below threshold — which is why it stops where it does.
+--------------------------------------------------------------------------- */
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  /* Brand accents — identical in light & dark so CTAs never change colour. */
+  --primary: #398dff;
+  --primary-foreground: oklch(0.17 0.04 258.7);
+  --brand-navy: #08234d;
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  --radius: 8px;
+
+  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm:
+    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md:
+    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg:
+    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl:
+    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+  --font-geist-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-cormorant-garamond:
+    "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times,
+    serif;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  /* Geist throughout — headings are separated from body text by weight
+     (--display-weight below), not by a second typeface. */
+  --display-family: var(--font-geist-sans);
+  --text-family: var(--font-geist-sans);
+  --display-weight: 700;
+  --text-weight: 400;
+}
+
+.dark {
+  /* The canvas is the BLACK end of the surface ramp; the panels carry the
+     gradient up to --brand-navy. --muted is the gradient's midpoint, kept as a
+     solid only so scrims have something to blend toward. The edge fades no
+     longer use it — they mask alpha instead, see .edge-fade-x/-y below. */
+  --background: #01070f;
+  --foreground: oklch(0.985 0 0);
+  --card: #04162f;
+  --card-foreground: oklch(0.985 0 0);
+  --popover: #04162f;
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #398dff;
+  --primary-foreground: oklch(0.17 0.04 258.7);
+  --brand-navy: #08234d;
+  --secondary: #051a3b;
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: #051a3b;
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: #051a3b;
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-brand-navy: var(--brand-navy);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-xs: calc(var(--radius) - 4px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 2 - 4px);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 3);
+  --radius-4xl: calc(var(--radius) * 4);
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1400px;
+
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+
+  --font-display: var(--display-family);
+  --font-text: var(--text-family);
+  --font-weight-display: var(--display-weight);
+  --font-weight-text: var(--text-weight);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  @media (width >= 1400px) {
+    max-width: 1220px;
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-text);
+    font-weight: var(--text-weight);
+  }
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: 0;
+  }
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .font-text {
+    font-family: var(--font-text);
+    font-weight: var(--text-weight);
+  }
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: 0;
+  }
+  .font-mono {
+    font-family: var(--font-mono), monospace;
+  }
+}
+
+@layer components {
+  button {
+    cursor: pointer;
+  }
+  [class*="border"] {
+    @apply border-border;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Surfaces.
+
+   The dark blue is never painted as a flat fill. Every large dark surface is a
+   gradient running from near-black to --brand-navy, which is what stops the
+   page reading as a stack of identical slabs.
+--------------------------------------------------------------------------- */
+
+/* The section panels. 155deg puts the black corner top-left and the navy
+   bottom-right, so each panel looks lit from the same direction.
+
+   Three stops, not two: the black end starts at near-pure #00030A and the
+   midpoint at 42% holds it there longer, so black is the dominant half of the
+   ramp and the navy reads as a glow rising into the corner. A straight
+   two-stop blend put the midtone at 50% and left the whole panel looking
+   uniformly blue. */
+.surface-panel {
+  background-image: linear-gradient(
+    155deg,
+    #00030a 0%,
+    #02101f 42%,
+    #08234d 100%
+  );
+}
+
+/* Cards raised off a panel. Same 155deg lighting as .surface-panel but shifted
+   a little lighter throughout, so a card reads as sitting on top rather than
+   cut into the surface — and, like every other dark surface here, it is a
+   gradient rather than a flat navy. */
+.surface-card {
+  background-image: linear-gradient(
+    155deg,
+    #01091a 0%,
+    #061a36 45%,
+    #0c2a5a 100%
+  );
+}
+
+/* Decorative wash behind the hero copy, layered ON the panel gradient. Nothing
+   is read from it, so it is free to be more saturated than the surfaces. */
+.bg-brand-wash {
+  background-image:
+    radial-gradient(
+      120% 90% at 88% 6%,
+      rgba(57, 141, 255, 0.18),
+      transparent 55%
+    ),
+    radial-gradient(90% 70% at 8% 100%, rgba(8, 35, 77, 0.55), transparent 60%);
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile hero slideshow (see HERO_MOBILE_SLIDES in src/data/images.ts).
+
+   Deliberately CSS-only. The hero photo is the first thing a visitor arriving
+   from an Instagram ad sees, and a JS-driven carousel there would be one more
+   thing that can fail to start on a cold 4G connection — or, worse, start late
+   and shift the layout. CSS keyframes run off the main thread and are painted
+   whether or not any island ever hydrates.
+
+   Every slide runs the SAME 25s animation, offset by a negative delay so all
+   five are already mid-cycle on the first frame. Slide i uses
+   `animation-delay: (i * step) - cycle`, which makes slide 0 peak at t=0,
+   slide 1 at t=5s, and so on — the fade-out of one slide overlaps exactly with
+   the fade-in of the next, so the stack is never blank. Both values are passed
+   in from the component, derived from the array length.
+--------------------------------------------------------------------------- */
+.hero-slide {
+  opacity: 0;
+  animation-name: hero-slideshow;
+  animation-duration: var(--hero-cycle, 25s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: opacity;
+}
+
+@keyframes hero-slideshow {
+  /* Hold, fade out, wait its turn, fade back in. 100% == 0%, so the fade-in at
+     the end is what meets the previous slide's fade-out.
+
+     These percentages are tuned to FIVE slides. Each slide owns 100/n = 20% of
+     the cycle: it holds for 16% (four fifths of its slot), fades out over the
+     next 4%, waits, then fades back in over the final 4% — which is exactly
+     when its predecessor is fading out, so the stack is never blank.
+
+     For a different slide count n, recompute:
+         hold  = (100 / n) * 0.8
+         out   =  100 / n
+         in    =  100 - (out - hold)
+     e.g. n = 4 -> 20% / 25% / 95%;  n = 6 -> 13.33% / 16.67% / 96.67%.
+     Slide DURATION is independent of this — that is SLIDE_STEP_SECONDS in
+     hero.tsx and can be changed on its own. */
+  0%,
+  16% {
+    opacity: 1;
+  }
+  20%,
+  96% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No cycling. The first slide simply stays up as a still hero. */
+  .hero-slide {
+    animation: none;
+    opacity: 0;
+  }
+  .hero-slide:first-child {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Photo marquee (the band — see TjanstMarquee).
+
+   CSS-only, for the same reasons as the hero slideshow above: it is present in
+   the server-rendered HTML, it needs no hydration, and it cannot shift the page
+   when JavaScript arrives. This replaced react-fast-marquee, which renders
+   `null` until its own mount effect fires — meaning the band was empty in the
+   HTML and only reserved its height after the island loaded.
+
+   Each track holds its tile list TWICE and translates by exactly -50%, so the
+   second copy arrives precisely where the first began and the loop is seamless
+   with no jump. Direction is a matter of which axis and whether the animation
+   runs in reverse, which is what lets the two mobile columns travel opposite
+   ways off one keyframe pair.
+--------------------------------------------------------------------------- */
+.marquee-track {
+  display: flex;
+  animation-duration: var(--marquee-duration, 60s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.marquee-x {
+  flex-direction: row;
+  width: max-content;
+  animation-name: marquee-x;
+}
+
+.marquee-y {
+  flex-direction: column;
+  height: max-content;
+  animation-name: marquee-y;
+}
+
+/* ---------------------------------------------------------------------------
+   Edge fades for the marquees and the hero slideshow.
+
+   These were overlay divs painting --muted down to transparent. A solid fade
+   colour only lines up when the thing behind it is that exact flat colour, and
+   every surface here is a 155deg gradient (#00030A -> #02101F -> #08234D), so
+   the overlay sat LIGHTER than the panel at the dark end of the ramp and
+   DARKER at the light end. Both open ends showed a band instead of dissolving.
+
+   Masking the content's alpha fixes it at the root: the strip fades to
+   transparent and the panel behind shows through untouched, so the fade
+   matches whatever it sits on — gradient, flat colour or photo — and keeps
+   matching if the surface is ever restyled.
+
+   Put these on the STATIC clipping box, never on .marquee-track: the mask is
+   resolved against the element's own box, so on a moving 7000px track it would
+   travel with the photos and only ever fade the track's true top edge.
+
+   --edge is the fade depth, overridable per breakpoint with [--edge:14rem].
+--------------------------------------------------------------------------- */
+.edge-fade-y {
+  --edge: 7rem;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--edge),
+    #000 calc(100% - var(--edge)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--edge),
+    #000 calc(100% - var(--edge)),
+    transparent
+  );
+}
+
+.edge-fade-x {
+  --edge: 8rem;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--edge),
+    #000 calc(100% - var(--edge)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--edge),
+    #000 calc(100% - var(--edge)),
+    transparent
+  );
+}
+
+/* The second mobile column travels the other way. */
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes marquee-x {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-y {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Stops dead and stays a legible static grid of photos. */
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Two-slide crossfade — the före/efter slideshow (see ForeEfter.astro).
+
+   Same CSS-only device as the retired hero slideshow above and for the same
+   reason: it needs no JavaScript, cannot fail to start on a cold connection,
+   and stops dead under prefers-reduced-motion.
+
+   Percentages follow the hero-slideshow formula for n = 2 slides:
+     hold = (100/2) * 0.8 = 40%,  out = 50%,  in = 100 - (50 - 40) = 90%.
+   Each slide gets `animation-delay: (i * cycle/2) - cycle`, so both are
+   mid-cycle on the first paint and the fades overlap with no blank frame.
+--------------------------------------------------------------------------- */
+.duo-slide {
+  opacity: 0;
+  animation: duo-slide var(--duo-cycle, 10s) linear infinite;
+  will-change: opacity;
+}
+
+@keyframes duo-slide {
+  0%,
+  40% {
+    opacity: 1;
+  }
+  50%,
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No cycling — the first image simply stays up as a still. */
+  .duo-slide {
+    animation: none;
+    opacity: 0;
+  }
+  .duo-slide:first-child {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Cart total — entrance animation on change (see LeadDialog's steg 2).
+
+   When the visitor answers JA to the polering tillval the total jumps from
+   1 990 kr to 5 040 kr. Without motion the number simply swaps and the change
+   is easy to miss; this makes the NEW figure arrive, so the consequence of the
+   click is unmistakable.
+
+   Driven by remounting the element (React `key={cartValue}`), not by a
+   transition: the two values are different text, and there is nothing for a
+   transition to interpolate between. A remount restarts the animation from
+   frame one every time the total changes.
+
+   Pure CSS by design — the campaign brief bans animation libraries, and this
+   sits inside the one thing on the page that has to work.
+
+   Deliberately short and un-bouncy: this is a price, and a price that springs
+   around reads as a gimmick. Same easing as the rest of the design system.
+--------------------------------------------------------------------------- */
+.total-enter {
+  animation: total-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes total-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.3em) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The figure still updates — it just appears instead of arriving. */
+  .total-enter {
+    animation: none;
+  }
+}

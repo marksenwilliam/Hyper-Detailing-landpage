@@ -1,0 +1,12 @@
+# Paid-traffic landing page. It shares its offer, prices and FAQ with the main
+# site, so it is deliberately kept out of the search index.
+#
+# The signal that does that is `<meta name="robots" content="noindex, follow">`,
+# emitted on every page here (/, /integritet, /tack, 404).
+#
+# There is deliberately NO `Disallow: /`. A disallowed page is never fetched,
+# so the noindex on it is never read — and a URL that gets linked from anywhere
+# can then still surface as a bare URL result that the unreachable noindex
+# cannot remove. Letting crawlers fetch the page is what makes the noindex work.
+User-agent: *
+Allow: /

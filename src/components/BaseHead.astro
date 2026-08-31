@@ -1,0 +1,124 @@
+---
+// Imported here so global.css ships on every page through this one component.
+import "../styles/global.css";
+
+import { SITE_METADATA, META_PIXEL_ID } from "@/data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  /** Paid-traffic pages are noindex by default — see index.astro. */
+  noindex?: boolean;
+  /** LCP images to preload. `media` scopes a responsive hero to one breakpoint. */
+  preload?: { href: string; media?: string }[];
+}
+
+const { title, description, image, noindex, preload = [] } = Astro.props;
+
+// Astro's directory build format ends built pathnames in "/", while internal
+// links are written without it. Normalise every emitted URL signal to the
+// slash-less form so canonical and og:url always agree. The bare root stays "/".
+const canonicalPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const canonicalURL = new URL(canonicalPath, Astro.site);
+
+const ogImage = image || SITE_METADATA.ogImage;
+const ogImageURL = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
+
+const metaPixelId = META_PIXEL_ID;
+
+// The snippet is built here as a STRING and injected with set:html below.
+//
+// It cannot be written as `<script>{`...`}</script>` inside an Astro
+// expression: children of a <script> are raw text, so the braces and backticks
+// survive into the output and the browser parses the whole thing as a dead
+// block statement — fbq is never defined and no event ever reaches Meta. That
+// failure is invisible until a pixel id is actually configured, which is
+// exactly when the campaign starts. set:html is the same mechanism
+// JsonLd.astro uses, and it emits real, executable JS.
+const metaPixelSnippet = metaPixelId
+  ? `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${JSON.stringify(metaPixelId)});fbq('track','PageView');`
+  : null;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Preconnect to Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!--
+  Geist carries both headings and body, so the page needs ONE family in ONE
+  request. Every extra stylesheet here is another render-blocking round trip on
+  a page whose whole job is to load fast enough that a paid click does not
+  bounce. The full 100..900 range is requested because it is a variable font —
+  one file regardless of how many weights the design ends up using.
+-->
+<link
+  href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap"
+  rel="stylesheet"
+/>
+
+{/*
+  LCP preload. The hero photo frames are <img> elements that every slide marks
+  `loading="lazy"` — deliberately, so React 19 does not hoist its own
+  media-less preload for all of them (see the note in hero.tsx). That leaves
+  the two opening photos to be prioritised here instead, where it can be done
+  precisely. `media` is optional and scopes a hint to one breakpoint when a
+  page needs it.
+*/}
+{
+  preload.map((p) => (
+    <link
+      rel="preload"
+      as="image"
+      href={p.href}
+      media={p.media}
+      fetchpriority="high"
+    />
+  ))
+}
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta
+  name="robots"
+  content={noindex ? "noindex, follow" : "index, follow"}
+/>
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Dark by design: no toggle, no prefers-color-scheme read. The `dark` class
+     is on <html> server-side, and this keeps it there. -->
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="color-scheme" content="dark" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={SITE_METADATA.locale} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:site_name" content={SITE_METADATA.siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{ogImageURL && <meta property="og:image" content={ogImageURL} />}
+
+<!-- Twitter — twitter:* tags use name=, not property= -->
+<meta
+  name="twitter:card"
+  content={ogImageURL ? "summary_large_image" : "summary"}
+/>
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+{/*
+  Meta Pixel. Rendered only when META_PIXEL_ID resolves non-empty (production
+  builds default to the real id; dev needs the env override), so dev ships
+  no third-party script until the campaign actually needs one. The Lead event
+  is fired from the dialog form on a successful submit (see
+  src/components/lp/LeadDialog.tsx), carrying an eventID that the server-side
+  Conversions API event in /api/lead shares, so Meta deduplicates the pair.
+*/}
+{metaPixelSnippet && <script is:inline set:html={metaPixelSnippet} />}

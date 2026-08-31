@@ -1,0 +1,74 @@
+---
+import SectionCard from "@/components/section-card.astro";
+import { ADDRESS_ONELINE, BUSINESS } from "@/data/business";
+import { RESPONSE_TIME } from "@/data/site";
+import DefaultLayout from "@/layouts/DefaultLayout.astro";
+
+// The form confirms inline, so a visitor never normally reaches this page.
+// It exists as a redirect target: some Meta / GoHighLevel setups want a real
+// URL to count as the conversion, and Turnstile-less fallback flows need
+// somewhere to land. Keep it noindex.
+---
+
+<DefaultLayout
+  title="Tack för din förfrågan | Hyper Detailing"
+  description="Vi har tagit emot din förfrågan och hör av oss inom 24 timmar."
+  noindex
+  hideNav
+  hideFloatingCall
+>
+  <div class="space-y-3 px-3 py-3 md:space-y-4 md:px-4 md:py-4 lg:px-6 lg:py-6">
+    <SectionCard>
+      <section
+        class="flex min-h-[80svh] flex-col items-center justify-center px-6 py-24 text-center"
+      >
+        <span
+          class="bg-primary/15 text-primary mb-8 flex size-16 items-center justify-center rounded-2xl"
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="size-8"
+          >
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+        </span>
+
+        <h1
+          class="max-w-2xl text-3xl leading-tight font-bold text-balance md:text-5xl"
+        >
+          Tack — vi har fått din förfrågan!
+        </h1>
+
+        <p class="text-muted-foreground mt-5 max-w-lg leading-relaxed">
+          Vi hör av oss {RESPONSE_TIME} för att bekräfta tid och gå igenom vad
+          just din bil behöver. Ingen bindning — du bestämmer efter samtalet.
+        </p>
+
+        <div class="mt-9 flex flex-col items-center gap-3 sm:flex-row">
+          <a
+            href={BUSINESS.phone.href}
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-12 items-center rounded-full px-8 text-base font-semibold transition-colors"
+          >
+            Ring {BUSINESS.phone.display}
+          </a>
+          <a
+            href="/"
+            class="inline-flex h-12 items-center rounded-full border border-white/20 px-8 text-base font-semibold text-white transition-colors hover:bg-white/5"
+          >
+            Tillbaka till startsidan
+          </a>
+        </div>
+
+        <p class="text-muted-foreground mt-10 text-sm">
+          {BUSINESS.name} · {ADDRESS_ONELINE}
+        </p>
+      </section>
+    </SectionCard>
+  </div>
+</DefaultLayout>

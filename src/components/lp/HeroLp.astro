@@ -1,0 +1,189 @@
+---
+/**
+ * Hero — priset är sidans högsta röst.
+ *
+ * Ordningen är mallens bevisade: tjänstnamnet störst och i emerald, en liten
+ * versal underrubrik som säger VAD tjänsten är, sedan frånpriset enormt med
+ * ankarpriset på raden efter. Allt vänsterställt mot samma kant, lead-texten
+ * och CTA:n sist.
+ *
+ * SKILLNADEN MOT MALLEN ÄR ENHETEN. "1 500 kr" utan "per detalj" läser som ett
+ * pris för hela bilen, och det klicket blir besviket i samma sekund det landar.
+ * Enheten sitter därför i em-storlek direkt efter siffran, inne i H1:et, och
+ * följer med på varje brytpunkt. Samma sak i CTA-knappen, i erbjudandebannern,
+ * i formuläret och i <title>. Ändra aldrig en av dem ensam (claim rule 1).
+ *
+ * Hela erbjudandet ligger i H1:et — namn, tjänst, pris, enhet, ankarpris och
+ * rabattpåstående. En skärmläsare hör "Lackering, sprutlackering av dörr,
+ * skärm, stötfångare eller huv, från 1 500 kronor per detalj, ordinarie pris
+ * från 3 000 kronor, 50 % rabatt" som EN mening — vilket är precis vad sidan
+ * säljer.
+ *
+ * BILDEN RENDERAS I TVÅ LÄGEN, och det är ett medvetet val:
+ *
+ *   < lg  ett brett band UNDER textblocket. Text ovanpå en mörk, rörig bild
+ *         håller inte på 390 px, och stackad ordning låter CTA:n hamna över
+ *         folden utan att bilden trycker ner den.
+ *   ≥ lg  bilden fyller hela sektionen som bakgrund, med en scrim som går från
+ *         ogenomskinlig vänsterkant till genomskinlig höger. Heroshotten är en
+ *         filmisk 2,2:1 där bilen sitter höger om mitten och vänstra tredjedelen
+ *         är mörk boxvägg — texten ligger alltså på den lugnaste delen av
+ *         bilden. Stackat på desktop lämnade layouten en tom högerhalva.
+ *
+ * Samma fil i båda lägena, så det blir en enda nedladdning.
+ *
+ * SCRIMEN ÄR INTE DEKORATION. Utan den ligger --muted-foreground på ~2,5:1 mot
+ * de ljusaste partierna i bilden. Gradienten håller vänstra 55 % i princip
+ * ogenomskinlig, vilket är vad som håller brödtexten över 4,5:1. Tunna inte ut
+ * den utan att mäta om.
+ *
+ * Alt-texten säger "en sprutbox", inte "vår sprutbox": bilden är en
+ * processbild, inte fotograferad hos Hyper (se src/data/images.ts).
+ *
+ * ALLA PRISER ÄR FRÅNPRISER (claim rule 1). Förbehållet står som finstilt rad
+ * direkt under prisblocket, på samma yta som priset — inte i sidfoten.
+ */
+import CtaButton from "@/components/lp/CtaButton.astro";
+import { IMAGES } from "@/data/images";
+import { LACKERING, discountLabel, isHalfPrice } from "@/data/packages";
+import { SCARCITY } from "@/data/site";
+import { formatKr } from "@/lib/utils";
+
+const hero = IMAGES.hero;
+---
+
+<section class="relative overflow-hidden">
+  {/* Desktopbakgrunden. aria-hidden + tom alt: bilden är samma motiv som
+      mobilbandet längre ned, och den har redan sin beskrivning där — två
+      uppläsningar av samma bild är brus för en skärmläsare. */}
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 hidden lg:block">
+    <img
+      src={hero.src}
+      alt=""
+      width={hero.width}
+      height={hero.height}
+      fetchpriority="high"
+      loading="eager"
+      decoding="async"
+      class="h-full w-full object-cover object-right"
+    />
+    {/* Två lager: en vågrät scrim som bär kontrasten för texten, och en
+        lodrät som mörkar underkanten så sektionsgränsen inte skär av bilden
+        mitt i en ljusrampa. */}
+    <div
+      class="absolute inset-0"
+      style="background-image: linear-gradient(90deg, #050403 0%, #050403 38%, rgba(5,4,3,0.86) 55%, rgba(5,4,3,0.35) 78%, rgba(5,4,3,0.15) 100%)"
+    >
+    </div>
+    <div
+      class="absolute inset-x-0 bottom-0 h-32"
+      style="background-image: linear-gradient(180deg, transparent, #050403)"
+    >
+    </div>
+  </div>
+
+  <div aria-hidden="true" class="bg-brand-wash pointer-events-none absolute inset-0"></div>
+
+  <div class="relative container pt-8 pb-10 sm:pt-12 md:pb-14 lg:min-h-[38rem] lg:pt-20 lg:pb-20">
+    <div class="max-w-3xl lg:max-w-xl xl:max-w-2xl">
+      <h1 class="text-white">
+        <span
+          class="block text-[clamp(2rem,10vw,2.5rem)] leading-[0.95] font-black tracking-tight break-words text-emerald-400 uppercase sm:text-[3.5rem] md:text-[4rem]"
+        >
+          {LACKERING.name}
+        </span>
+
+        <span
+          class="mt-2.5 block text-[12px] leading-tight font-bold tracking-wide text-white uppercase sm:mt-3 sm:text-sm md:text-base"
+        >
+          Sprutlackering av dörr, skärm, stötfångare eller huv
+        </span>
+
+        {/* "Från" och enheten i em-storlek, inte i egna responsiva stegar: de
+            följer då siffran automatiskt på varje brytpunkt. nowrap runt
+            siffran + "kr" så ett smalt fönster aldrig lägger "kr" ensamt på en
+            rad under en 72 px-siffra. Enheten får däremot bryta till egen rad
+            — den är en hel fras, inte en del av talet. */}
+        <span
+          class="mt-5 block text-[clamp(2.25rem,11.7vw,2.75rem)] leading-none font-black tracking-tight text-white sm:mt-6 sm:text-[4rem] md:text-[4.5rem]"
+        >
+          <span class="whitespace-nowrap">
+            <span class="text-[0.36em] font-bold tracking-normal text-white/85"
+              >Från </span
+            >{formatKr(LACKERING.price)}
+          </span>
+          <span class="text-[0.3em] font-bold tracking-normal text-white/85">
+            {LACKERING.unit}
+          </span>
+        </span>
+
+        {/* Ankarpriset och rabatten på samma baslinje. text-white/55, inte
+            white/40 — /40 ligger på 3,6:1 mot panelen och faller under 4,5:1.
+            aria-hidden + sr-only så uppläsningen blir "ordinarie pris från
+            3 000 kr" och inte två lösryckta tal. */}
+        <span class="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 sm:mt-3">
+          <span
+            class="text-[1.5rem] leading-tight font-bold whitespace-nowrap text-white/55 sm:text-[2rem] md:text-[2.5rem]"
+          >
+            <span aria-hidden="true">
+              <span class="text-[0.55em] font-semibold">ord. från </span><span
+                class="line-through">{formatKr(LACKERING.originalPrice)}</span
+              >
+            </span>
+            <span class="sr-only">
+              ordinarie pris från {formatKr(LACKERING.originalPrice)}
+            </span>
+          </span>
+
+          <span
+            class="text-[13px] leading-tight font-bold tracking-wider text-emerald-400 uppercase sm:text-sm md:text-base"
+          >
+            {/* isHalfPrice är sant så länge 1 500 är exakt halva 3 000. Ändras
+                priserna till ett ojämnt förhållande faller raden automatiskt
+                tillbaka på procentsatsen i stället för att ljuga. */}
+            {isHalfPrice(LACKERING)
+              ? `Halva priset — ${discountLabel(LACKERING)} rabatt!`
+              : `${discountLabel(LACKERING)} rabatt!`}
+          </span>
+        </span>
+      </h1>
+
+      {/* Frånprisförbehållet hör ihop med siffran, inte med sidfoten. Ordagrant
+          samma mening som innehållslistan och formuläret använder — kundens
+          egen formulering 2026-08-31: "en huv blir exempelvis dyrare". */}
+      <p class="text-muted-foreground mt-3 max-w-lg text-[12px] leading-relaxed sm:text-[13px]">
+        Frånpris per detalj — en större yta som en huv eller ett tak kostar mer.
+        Du får exakt pris innan du bokar, utan bindning.
+      </p>
+
+      <p class="text-muted-foreground mt-5 max-w-xl text-[15px] leading-relaxed sm:text-lg">
+        En repad dörr eller en blekt stötfångare drar ner hela bilen. Vi lackerar
+        detaljen i bilens egen kulör — och just nu till halva priset.
+      </p>
+
+      <div class="mt-6 sm:mt-7">
+        <CtaButton />
+      </div>
+
+      <p class="text-muted-foreground mt-3 text-[12px] leading-relaxed">
+        {SCARCITY}
+      </p>
+    </div>
+  </div>
+
+  {/* Mobil- och surfplattebandet. Döljs från lg, där samma bild i stället
+      ligger som bakgrund ovanför. fetchpriority=high + eager: det här är
+      LCP-elementet, och en annonsbesökare landar direkt på det. */}
+  <div class="relative container pb-8 md:pb-10 lg:hidden">
+    <img
+      src={hero.src}
+      alt={hero.alt}
+      width={hero.width}
+      height={hero.height}
+      fetchpriority="high"
+      loading="eager"
+      decoding="async"
+      class="aspect-[16/9] w-full rounded-2xl object-cover object-center ring-1 ring-white/10 sm:aspect-[2/1]"
+    />
+  </div>
+</section>

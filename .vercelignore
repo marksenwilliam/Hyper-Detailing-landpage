@@ -1,0 +1,8 @@
+# vercel deploy (CLI) respekterar .vercelignore, inte .gitignore.
+# Se kommentaren i .gitignore: Facebook-exporten får aldrig deployas.
+public/facebook-*
+_kallmaterial-*
+public/images/ads/
+node_modules
+dist
+legacy
