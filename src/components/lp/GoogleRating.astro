@@ -6,22 +6,15 @@
  * formuläret, så en utlänk härifrån vore ett sätt att lämna tratten utan att
  * konvertera. Ren Astro — noll JavaScript.
  *
- * ⚠️ HYPER DETAILINGS SNITT OCH ANTAL ÄR OKÄNDA. Profilen går inte att hitta
- * via sökning (kontrollerat 2026-08-31) och siffrorna finns inte i klientens
- * material, så googleRating.rating och .count är båda null i
- * src/data/reviews.ts.
+ * HYPER DETAILINGS GOOGLE-SNITT OCH GOOGLE-ANTAL ÄR FORTFARANDE OKÄNDA,
+ * så googleRating.rating och .count är null i src/data/reviews.ts. Klienten
+ * bekräftade däremot 2026-09-09 att det sammanlagda antalet omdömen på Google
+ * och Facebook är över 25.
  *
- * Därför har den här komponenten TVÅ lägen:
- *
- *   rating satt  → stjärnor + snitt + antal, precis som mallen gjorde.
- *   rating null  → INGA stjärnor. Fem utfyllda stjärnor utan ett verifierat
- *                  snitt bakom sig är ett femstjärnigt påstående sidan inte
- *                  kan stå för — mallens variant ritade dem ändå
- *                  (`Math.round(rating ?? 5)`), vilket är precis den buggen
- *                  det här läget finns för att undvika. Badgen säger då bara
- *                  var omdömena finns.
- *
- * Fyll i de riktiga siffrorna i reviews.ts så tänds stjärnorna av sig själva.
+ * Den ensamma guldstjärnan bredvid G-logotypen är dekorativ och betyder inte
+ * ett femstjärnigt snitt; därför är den aria-hidden. Om ett verifierat
+ * Google-snitt fylls i senare renderas de separata betygsstjärnorna och
+ * snittet fortfarande via rating-läget nedan.
  */
 import { googleRating } from "@/data/reviews";
 
@@ -31,7 +24,9 @@ interface Props {
 
 const { class: className = "" } = Astro.props;
 const { rating, count } = googleRating;
-/** null-säkert: stjärnor ritas ENBART när ett verifierat snitt finns. */
+/** Bekräftat kombinerat antal på Google och Facebook, inte Google-only count. */
+const COMBINED_REVIEW_COUNT = 25;
+/** null-säkert: betygsstjärnor ritas ENBART när ett verifierat snitt finns. */
 const filled = rating === null ? 0 : Math.round(rating);
 
 const STAR_PATH =
@@ -76,6 +71,16 @@ const STAR_PATH =
       ></path>
     </svg>
 
+    {/* En dekorativ guldstjärna — inte ett påstående om ett femstjärnigt snitt. */}
+    <svg
+      viewBox="0 0 24 24"
+      class="size-[1.05em] shrink-0"
+      fill="#FBBC04"
+      aria-hidden="true"
+    >
+      <path d={STAR_PATH} />
+    </svg>
+
     {
       rating !== null && (
         <span
@@ -111,7 +116,7 @@ const STAR_PATH =
         {
           count !== null
             ? `${count} omdömen på Google`
-            : "Omdömen från Google och Facebook"
+            : `+${COMBINED_REVIEW_COUNT} omdömen på Google & Facebook`
         }
       </span>
     </span>
