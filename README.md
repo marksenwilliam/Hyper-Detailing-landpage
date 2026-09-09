@@ -25,9 +25,8 @@ första är de som faktiskt kan kosta pengar.
 | 4 | **Processtegen** ("Så går lackeringen till") | [`src/data/packages.ts`](src/data/packages.ts) → `LACKERING.includes` | Stegen beskriver vad en sprutlackering per definition innehåller, men är **inte** lästa av Hyper. Bekräfta särskilt: grundfärg alltid? demontering eller bara maskering? lackeras det i box? |
 
 Dessutom saknas, utan att blockera: organisationsnummer, öppettider, Google
-Maps-länk, sociala länkar, Meta Pixel-id och Google-betygets snitt/antal. Alla
-är markerade i koden och **utelämnas hellre än gissas** — sidan renderar korrekt
-utan dem.
+Maps-länk, sociala länkar och Google-betygets snitt/antal. Alla är markerade i
+koden och **utelämnas hellre än gissas** — sidan renderar korrekt utan dem.
 
 ---
 
@@ -138,8 +137,8 @@ betald lead.
 
 - Leads taggas `hyper-lackering-lead` och får `source: hyper-lackering-lp`, så
   de går att skilja från Hypers övriga trafik.
-- Meta Pixel-id är tomt (`src/data/site.ts`) tills Hyper har ett eget. Mönsterås
-  id fick medvetet inte följa med — det hade skickat Hypers annonsdata till en
-  annan kunds dataset.
+- Meta Pixel `2610494469335172` är aktiverad i produktionsbygget via
+  `src/data/site.ts`. `PUBLIC_META_PIXEL_ID` kan överrida standardvärdet för
+  staging; lokal utveckling skickar inga PageViews utan en sådan override.
 - Sidan är `noindex`. Den delar tjänst och priser med hyper-detailing.vercel.app,
   och två indexerade sidor som konkurrerar om samma sökord hjälper ingen.
