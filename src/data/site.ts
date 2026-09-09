@@ -40,15 +40,17 @@ export const SCARCITY = "Begränsat antal lackeringstider varje vecka";
  * staging-pixel). Tomt i dev så `astro dev` på localhost aldrig skickar
  * PageViews till den riktiga datamängden.
  *
- * ⚠️ SAKNAS — Hyper Detailing har ingen känd pixel. Mönsterås pixel-id fick
- * INTE följa med hit; den hade skickat Hypers annonsdata till en annan kunds
- * dataset. Fyll i Hypers eget id nedan, eller sätt PUBLIC_META_PIXEL_ID i env.
+ * Hyper Detailing använder pixel 2610494469335172 i produktion.
+ * PUBLIC_META_PIXEL_ID kan fortfarande överrida standardvärdet för staging.
+ * I lokal utveckling förblir pixeln avstängd om ingen override anges, så
+ * testbesök inte skickar PageViews till produktionsdatasetet.
  *
  * CAPI-ACCESSTOKEN är motsatt sorts värde: en riktig hemlighet, läses bara
  * server-side ur META_CAPI_ACCESS_TOKEN. Den får aldrig stå här.
  */
 export const META_PIXEL_ID: string =
-  import.meta.env.PUBLIC_META_PIXEL_ID || "";
+  import.meta.env.PUBLIC_META_PIXEL_ID ||
+  (import.meta.env.PROD ? "2610494469335172" : "");
 
 /**
  * Version på samtyckestexten. Bumpa strängen när formuleringen i
