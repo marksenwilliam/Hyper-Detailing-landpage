@@ -6,28 +6,18 @@
  * formuläret, så en utlänk härifrån vore ett sätt att lämna tratten utan att
  * konvertera. Ren Astro — noll JavaScript.
  *
- * HYPER DETAILINGS GOOGLE-SNITT OCH GOOGLE-ANTAL ÄR FORTFARANDE OKÄNDA,
- * så googleRating.rating och .count är null i src/data/reviews.ts. Klienten
- * bekräftade däremot 2026-09-09 att det sammanlagda antalet omdömen på Google
- * och Facebook är över 25.
- *
- * Den ensamma guldstjärnan bredvid G-logotypen är dekorativ och betyder inte
- * ett femstjärnigt snitt; därför är den aria-hidden. Om ett verifierat
- * Google-snitt fylls i senare renderas de separata betygsstjärnorna och
- * snittet fortfarande via rating-läget nedan.
+ * Klienten bekräftade 2026-09-09 att det sammanlagda antalet omdömen på
+ * Google och Facebook är över 25, och begärde 2026-09-10 att badgen visar fem
+ * gyllene stjärnor tillsammans med den siffran.
  */
-import { googleRating } from "@/data/reviews";
 
 interface Props {
   class?: string;
 }
 
 const { class: className = "" } = Astro.props;
-const { rating, count } = googleRating;
-/** Bekräftat kombinerat antal på Google och Facebook, inte Google-only count. */
+/** Bekräftat kombinerat antal på Google och Facebook. */
 const COMBINED_REVIEW_COUNT = 25;
-/** null-säkert: betygsstjärnor ritas ENBART när ett verifierat snitt finns. */
-const filled = rating === null ? 0 : Math.round(rating);
 
 const STAR_PATH =
   "M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.401 8.169L12 18.896l-7.335 3.863 1.401-8.169L.132 9.21l8.2-1.192z";
@@ -71,54 +61,27 @@ const STAR_PATH =
       ></path>
     </svg>
 
-    {/* En dekorativ guldstjärna — inte ett påstående om ett femstjärnigt snitt. */}
-    <svg
-      viewBox="0 0 24 24"
-      class="size-[1.05em] shrink-0"
-      fill="#FBBC04"
-      aria-hidden="true"
+    <span
+      class="inline-flex shrink-0 items-center gap-[0.06em]"
+      role="img"
+      aria-label="5 av 5 stjärnor"
     >
-      <path d={STAR_PATH} />
-    </svg>
-
-    {
-      rating !== null && (
-        <span
-          class="inline-flex shrink-0 items-center gap-[0.06em]"
-          role="img"
-          aria-label={`${filled} av 5 stjärnor`}
-        >
-          {Array.from({ length: 5 }).map((_, i) => (
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              class="size-[1.05em]"
-              fill={i < filled ? "#FBBC04" : "none"}
-              stroke="#FBBC04"
-              stroke-width={i < filled ? 0 : 1.5}
-            >
-              <path d={STAR_PATH} />
-            </svg>
-          ))}
-        </span>
-      )
-    }
-
-    <span>
       {
-        rating !== null && (
-          <span class="font-semibold text-white">
-            {rating.toLocaleString("sv-SE")} ·{" "}
-          </span>
-        )
+        Array.from({ length: 5 }).map(() => (
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            class="size-[1.05em]"
+            fill="#FBBC04"
+          >
+            <path d={STAR_PATH} />
+          </svg>
+        ))
       }
-      <span class="text-white/70">
-        {
-          count !== null
-            ? `${count} omdömen på Google`
-            : `+${COMBINED_REVIEW_COUNT} omdömen på Google & Facebook`
-        }
-      </span>
+    </span>
+
+    <span class="text-white/70">
+      +{COMBINED_REVIEW_COUNT} omdömen på Google &amp; Facebook
     </span>
   </div>
 </div>
