@@ -7,6 +7,7 @@ import { LeadDialog } from "@/components/lp/LeadDialog";
 import OfferSection from "@/components/lp/OfferSection.astro";
 import PackageContents from "@/components/lp/PackageContents.astro";
 import ReviewsSection from "@/components/lp/ReviewsSection.astro";
+import StickyRocketCta from "@/components/lp/StickyRocketCta.astro";
 import TopBar from "@/components/lp/TopBar.astro";
 import JsonLd from "@/components/JsonLd.astro";
 import SectionCard from "@/components/section-card.astro";
@@ -22,11 +23,11 @@ import { graph, localBusinessNode, webSiteNode } from "@/lib/schema";
   en CTA upprepad fyra gånger, ett dialogformulär (två steg — kontaktuppgifter,
   sedan det enda tillvalet före submit).
 
-  Navbar, footer, floating pill and the FAQ/marquee/process sections are gone
-  BY DESIGN — the CTA buttons and the form are the page's only clickable
-  elements (plus the legally required privacy-policy link). hideNav/hideFooter/
-  hideFloatingCall keep the layout's Meta Pixel, UTM capture and bfcache
-  repair, which must not change.
+  Navbar, footer, the layout's old floating-call pill and the FAQ/marquee
+  sections are gone by design. A fixed "Boka nu" rocket CTA was added on
+  2026-09-10 at the client's request; like every other CTA, it opens the same
+  LeadDialog through data-open-lead. hideNav/hideFooter/hideFloatingCall keep
+  the layout's Meta Pixel, UTM capture and bfcache repair, which must not change.
 
   No faqPageNode in the JSON-LD any more: the FAQ section left the page, and
   the node must mirror what is actually rendered.
@@ -99,5 +100,6 @@ const schema = graph([localBusinessNode(heroImage), webSiteNode()]);
       dialog must be able to open the instant a visitor taps the hero CTA.
     */
   }
+  <StickyRocketCta />
   <LeadDialog client:load />
 </DefaultLayout>
