@@ -1,0 +1,307 @@
+---
+/**
+ * Fixed conversion CTA, copied from the primary "Boka nu" rocket button in
+ * marksenwilliam/Hyper-detailing's Hero.astro.
+ *
+ * position: fixed keeps it attached to the viewport while the page scrolls.
+ * LeadDialog.tsx delegates clicks from every [data-open-lead] control, so this
+ * static Astro button opens the existing contact form without another client
+ * island or duplicated dialog state.
+ */
+const ctaPoints = [
+  { left: "10%", opacity: "1", duration: "2.35s", delay: "0.2s" },
+  { left: "30%", opacity: "0.7", duration: "2.5s", delay: "0.5s" },
+  { left: "25%", opacity: "0.8", duration: "2.2s", delay: "0.1s" },
+  { left: "44%", opacity: "0.6", duration: "2.05s", delay: "" },
+  { left: "50%", opacity: "1", duration: "1.9s", delay: "" },
+  { left: "75%", opacity: "0.5", duration: "1.5s", delay: "1.5s" },
+  { left: "88%", opacity: "0.9", duration: "2.2s", delay: "0.2s" },
+  { left: "58%", opacity: "0.8", duration: "2.25s", delay: "0.2s" },
+  { left: "98%", opacity: "0.6", duration: "2.6s", delay: "0.1s" },
+  { left: "65%", opacity: "1", duration: "2.5s", delay: "0.2s" },
+];
+---
+
+<div class="sticky-rocket">
+  <button
+    type="button"
+    class="sticky-rocket__button"
+    data-open-lead
+    aria-haspopup="dialog"
+    aria-label="Boka nu – öppna kontaktformuläret"
+  >
+    <span class="sticky-rocket__fold" aria-hidden="true"></span>
+
+    <span class="sticky-rocket__points" aria-hidden="true">
+      {
+        ctaPoints.map((point) => (
+          <span
+            class="sticky-rocket__point"
+            style={`left: ${point.left}; opacity: ${point.opacity}; animation-duration: ${point.duration};${point.delay ? ` animation-delay: ${point.delay};` : ""}`}
+          />
+        ))
+      }
+    </span>
+
+    <span class="sticky-rocket__inner">
+      Boka nu
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="white"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="sticky-rocket__icon"
+        aria-hidden="true"
+      >
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<style>
+  .sticky-rocket {
+    position: fixed;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    z-index: 60;
+    max-width: calc(100vw - 2rem);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .sticky-rocket__button {
+    --cta-round: 0.75em;
+    --cta-base: #d33f00;
+    --cta-glow: 255 140 60;
+    position: relative;
+    display: inline-flex;
+    min-width: 11rem;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0.9em 1.8em;
+    border: 0;
+    border-radius: var(--cta-round);
+    appearance: none;
+    background:
+      radial-gradient(
+        65.28% 65.28% at 50% 100%,
+        rgb(var(--cta-glow) / 0.85) 0%,
+        rgb(var(--cta-glow) / 0) 100%
+      ),
+      linear-gradient(0deg, var(--cta-base), var(--cta-base));
+    box-shadow:
+      0 18px 45px -12px rgba(211, 63, 0, 0.72),
+      0 8px 22px rgba(0, 0, 0, 0.45);
+    color: white;
+    font: inherit;
+    font-size: 1rem;
+    white-space: nowrap;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .sticky-rocket__button::before,
+  .sticky-rocket__button::after {
+    content: "";
+    position: absolute;
+    inset: var(--cta-space);
+    z-index: 0;
+    border-radius: calc(var(--cta-round) - var(--cta-space));
+    transition: all 0.5s ease-in-out;
+  }
+
+  .sticky-rocket__button::before {
+    --cta-space: 1px;
+    background: linear-gradient(
+      177.95deg,
+      rgba(255, 255, 255, 0.19) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+
+  .sticky-rocket__button::after {
+    --cta-space: 2px;
+    background:
+      radial-gradient(
+        65.28% 65.28% at 50% 100%,
+        rgb(var(--cta-glow) / 0.85) 0%,
+        rgb(var(--cta-glow) / 0) 100%
+      ),
+      linear-gradient(0deg, var(--cta-base), var(--cta-base));
+  }
+
+  .sticky-rocket__button:hover {
+    box-shadow:
+      0 20px 50px -10px rgba(211, 63, 0, 0.85),
+      0 10px 26px rgba(0, 0, 0, 0.48);
+    transform: translateY(-2px);
+  }
+
+  .sticky-rocket__button:active {
+    transform: scale(0.95);
+  }
+
+  .sticky-rocket__button:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+  }
+
+  .sticky-rocket__inner {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.571em;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  .sticky-rocket__icon {
+    width: 1.143em;
+    height: 1.143em;
+    transition: fill 0.1s linear;
+  }
+
+  .sticky-rocket__fold {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background: radial-gradient(
+      100% 75% at 55%,
+      rgb(var(--cta-glow) / 0.85) 0%,
+      rgb(var(--cta-glow) / 0) 100%
+    );
+    box-shadow: 0 0 3px black;
+    border-top-right-radius: var(--cta-round);
+    border-bottom-left-radius: 0.5em;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .sticky-rocket__fold::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150%;
+    height: 150%;
+    background-color: #e8e8e8;
+    transform: rotate(45deg) translateX(0%) translateY(-1.125em);
+    pointer-events: none;
+  }
+
+  .sticky-rocket__button:hover .sticky-rocket__fold {
+    margin-top: -1em;
+    margin-right: -1em;
+  }
+
+  .sticky-rocket__points {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .sticky-rocket__point {
+    position: absolute;
+    bottom: -10px;
+    width: 2px;
+    height: 2px;
+    background-color: white;
+    border-radius: 9999px;
+    pointer-events: none;
+    animation: sticky-floating-points infinite ease-in-out;
+  }
+
+  @keyframes sticky-floating-points {
+    0% {
+      transform: translateY(0);
+    }
+    85% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(-55px);
+      opacity: 0;
+    }
+  }
+
+  .sticky-rocket__button:focus .sticky-rocket__icon {
+    fill: white;
+  }
+
+  .sticky-rocket__button:hover .sticky-rocket__icon {
+    fill: transparent;
+    animation:
+      sticky-dasharray 1s linear forwards,
+      sticky-filled 0.1s linear forwards 0.95s;
+  }
+
+  @keyframes sticky-dasharray {
+    from {
+      stroke-dasharray: 0 0 0 0;
+    }
+    to {
+      stroke-dasharray: 68 68 0 0;
+    }
+  }
+
+  @keyframes sticky-filled {
+    to {
+      fill: white;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .sticky-rocket {
+      bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .sticky-rocket__button {
+      min-width: 12rem;
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-rocket__button,
+    .sticky-rocket__button::before,
+    .sticky-rocket__button::after,
+    .sticky-rocket__fold,
+    .sticky-rocket__icon {
+      transition-duration: 0.01ms;
+    }
+
+    .sticky-rocket__point {
+      display: none;
+    }
+
+    .sticky-rocket__button:hover .sticky-rocket__icon {
+      fill: white;
+      animation: none;
+    }
+  }
+</style>
