@@ -78,8 +78,9 @@ const ctaPoints = [
 
   .sticky-rocket__button {
     --cta-round: 0.75em;
-    --cta-base: #d33f00;
-    --cta-glow: 255 140 60;
+    /* Deeper shade of the landing page's #398dff primary: white stays AA. */
+    --cta-base: #1e63c6;
+    --cta-glow: 57 141 255;
     position: relative;
     display: inline-flex;
     min-width: 11rem;
@@ -99,7 +100,7 @@ const ctaPoints = [
       ),
       linear-gradient(0deg, var(--cta-base), var(--cta-base));
     box-shadow:
-      0 18px 45px -12px rgba(211, 63, 0, 0.72),
+      0 18px 45px -12px rgba(30, 99, 198, 0.72),
       0 8px 22px rgba(0, 0, 0, 0.45);
     color: white;
     font: inherit;
@@ -145,7 +146,7 @@ const ctaPoints = [
 
   .sticky-rocket__button:hover {
     box-shadow:
-      0 20px 50px -10px rgba(211, 63, 0, 0.85),
+      0 20px 50px -10px rgba(30, 99, 198, 0.85),
       0 10px 26px rgba(0, 0, 0, 0.48);
     transform: translateY(-2px);
   }
